@@ -17,7 +17,33 @@ namespace Kuddkrig
 
             int mapTarget = 0;
             int mapDisplay = 1;
-            char[] mapo = { 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', '_', '_', '_', '_', '_', '_', '_', '_', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B' };
+            char[,] mapp = {
+                {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ','P',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
+                };
+            float playerY = 0;
+            float playerX = 0;
+            float playerXSpeed = 0.1f;
+            float playerYSpeed = 0.1f;
+            int playerLock = 0;
             while (!Raylib.WindowShouldClose())
             {
                 mapSelect map = mapSelect.map1;
@@ -40,41 +66,61 @@ namespace Kuddkrig
 
 
                 Raylib.ClearBackground(Color.WHITE);
+                int mapScale = 10;
 
-                for (int i = 0; i < 30; i++)
+                int offsetX = 50;
+                int offsetY = 50;
+
+
+                for (int y = 0; y < mapp.GetLength(0); y++)
                 {
-                    int K = 1;
-                    int secY = 10;
-                    int secX = 0;
-                    switch (K)
+                    for (int x = 0; x < mapp.GetLength(1); x++)
                     {
-                        case 1:
-                            secX = i * 10;
-                            break;
-                        case 2:
-                            secX = i * 10 - 10;
-                            break;
-                        case 3:
-                            secX = i * 10 - 20;
-                            break;
-                    }
-                    if (i > 10 * K)
-                    {
-                        K++;
-                        secY = secY + 10;
-                        secX = 10;
-                    }
+                        if (mapp[y, x] == 'B')
+                        {
+                            Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                        }
+                        else if (mapp[y, x] == 'P')
+                        {
+                            if (playerLock == 0)
+                            {
+                                playerY = offsetY + y * mapScale;
+                                playerX = offsetX + x * mapScale;
+                            }
+                            playerLock = 1;
+                            if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
+                            {
+                                if (playerXSpeed < 1.05f)
+                                {
+                                    playerXSpeed = playerXSpeed * (1.01f);
+                                    playerX = playerX - playerXSpeed;
+                                }
+                                else
+                                {
+                                    playerX = playerX - playerXSpeed;
+                                }
+                            }
+                            else if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
+                            {
+                                if (playerXSpeed < 1.05f)
+                                {
+                                    playerXSpeed = playerXSpeed * 1.01f;
+                                    playerX = playerX + playerXSpeed;
+                                }
+                                else
+                                {
+                                    playerX = playerX + playerXSpeed;
+                                }
+                            }
+                            Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
+                        }
+                        else
+                        {
 
-
-                    if (mapo[i] == 'B')
-                    {
-                        Raylib.DrawRectangle(secX, secY, 10, 10, Color.BLACK);
-                    }
-                    else
-                    {
-
+                        }
                     }
                 }
+
 
                 Raylib.EndDrawing();
             }
