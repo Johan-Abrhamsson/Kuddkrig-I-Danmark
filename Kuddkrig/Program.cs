@@ -48,7 +48,7 @@ namespace Kuddkrig
             float playerXSpeed = 0f;
             float playerYSpeed = 0f;
             float playerSpeedIncr = 0.0001f;
-            float playerSpeedDecr = 0.0005f;
+            float playerSpeedDecr = 0.0001f;
             int playerLock = 0;
             while (!Raylib.WindowShouldClose())
             {
@@ -105,13 +105,19 @@ namespace Kuddkrig
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
                 {
                     playerX = playerX + playerXSpeed;
-                    playerXSpeed = playerXSpeed - playerSpeedIncr;
+                    if (playerXSpeed > -0.05)
+                    {
+                        playerXSpeed = playerXSpeed - playerSpeedIncr;
+                    }
 
                 }
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
                 {
                     playerX = playerX + playerXSpeed;
-                    playerXSpeed = playerXSpeed + playerSpeedIncr;
+                    if (playerXSpeed < 0.05)
+                    {
+                        playerXSpeed = playerXSpeed + playerSpeedIncr;
+                    }
 
                 }
                 else
@@ -130,13 +136,19 @@ namespace Kuddkrig
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
                 {
                     playerY = playerY + playerYSpeed;
-                    playerYSpeed = playerYSpeed + playerSpeedIncr;
+                    if (playerYSpeed < 0.05)
+                    {
+                        playerYSpeed = playerYSpeed + playerSpeedIncr;
+                    }
 
                 }
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_UP))
                 {
                     playerY = playerY + playerYSpeed;
-                    playerYSpeed = playerYSpeed - playerSpeedIncr;
+                    if (playerYSpeed > -0.05)
+                    {
+                        playerYSpeed = playerYSpeed - playerSpeedIncr;
+                    }
                 }
                 else
                 {
