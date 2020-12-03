@@ -75,6 +75,7 @@ namespace Kuddkrig
             float playerSpeedIncr = 0.0001f;
             float playerSpeedDecr = 0.0001f;
             bool playerLock = false;
+            int playerStill = 0;
             mapSelect map = mapSelect.map0;
             while (!Raylib.WindowShouldClose())
             {
@@ -124,7 +125,7 @@ namespace Kuddkrig
                                     playerX = offsetX + x * mapScale;
                                 }
                                 playerLock = true;
-                                Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
+                                Raylib.DrawCircle((int)playerX + 2, (int)playerY + 2, 3, Color.RED);
                             }
                             else
                             {
@@ -137,7 +138,7 @@ namespace Kuddkrig
                             {
                                 Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
                             }
-                            else if (mapP1[y, x] == 'P')
+                            else if (mapP2[y, x] == 'P')
                             {
                                 if (playerLock == false)
                                 {
@@ -145,7 +146,7 @@ namespace Kuddkrig
                                     playerX = offsetX + x * mapScale;
                                 }
                                 playerLock = true;
-                                Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
+                                Raylib.DrawCircle((int)playerX + 3, (int)playerY + 3, 3, Color.RED);
                             }
                             else
                             {
@@ -160,6 +161,7 @@ namespace Kuddkrig
                 }
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
                 {
+                    playerStill = 0;
                     playerX = playerX + playerXSpeed;
                     if (playerXSpeed > -0.05)
                     {
@@ -169,6 +171,7 @@ namespace Kuddkrig
                 }
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
                 {
+                    playerStill = 0;
                     playerX = playerX + playerXSpeed;
                     if (playerXSpeed < 0.05)
                     {
@@ -180,17 +183,28 @@ namespace Kuddkrig
                 {
                     if (playerXSpeed > 0)
                     {
+                        playerStill++;
                         playerX = playerX + playerXSpeed;
                         playerXSpeed = playerXSpeed - playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerXSpeed = 0;
+                        }
                     }
                     if (playerXSpeed < 0)
                     {
+                        playerStill++;
                         playerX = playerX + playerXSpeed;
                         playerXSpeed = playerXSpeed + playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerXSpeed = 0;
+                        }
                     }
                 }
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
                 {
+                    playerStill = 0;
                     playerY = playerY + playerYSpeed;
                     if (playerYSpeed < 0.05)
                     {
@@ -200,6 +214,7 @@ namespace Kuddkrig
                 }
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_UP))
                 {
+                    playerStill = 0;
                     playerY = playerY + playerYSpeed;
                     if (playerYSpeed > -0.05)
                     {
@@ -210,13 +225,24 @@ namespace Kuddkrig
                 {
                     if (playerYSpeed > 0)
                     {
+                        playerStill++;
                         playerY = playerY + playerYSpeed;
                         playerYSpeed = playerYSpeed - playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerYSpeed = 0;
+                        }
+
                     }
                     if (playerYSpeed < 0)
                     {
+                        playerStill++;
                         playerY = playerY + playerYSpeed;
                         playerYSpeed = playerYSpeed + playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerYSpeed = 0;
+                        }
                     }
                 }
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
@@ -225,6 +251,8 @@ namespace Kuddkrig
                     playerLock = false;
                     playerXSpeed = 0;
                     playerYSpeed = 0;
+                    playerX = 0;
+                    playerY = 0;
                 }
                 Raylib.DrawText(playerSpeedIncr.ToString(), 600, 400, 30, Color.RED);
                 Raylib.DrawText(playerSpeedDecr.ToString(), 600, 500, 30, Color.RED);
