@@ -8,7 +8,10 @@ namespace Kuddkrig
 
         public enum mapSelect
         {
-            map1
+            map0,
+            map1,
+            map2,
+            map3
         }
 
         static void Main(string[] args)
@@ -17,7 +20,7 @@ namespace Kuddkrig
 
             int mapTarget = 0;
             int mapDisplay = 1;
-            char[,] mapp = {
+            char[,] mapP1 = {
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 {'B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
                 {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
@@ -39,34 +42,59 @@ namespace Kuddkrig
                 {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 };
+            char[,] mapP2 = {
+                {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
+                {'B','P',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ','B',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ','B',' ','B',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
+                {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
+                {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
+                };
             float playerY = 0;
             float playerX = 0;
             float[,] playerPos = {
             { playerY},
             { playerX},
-        };
+            };
             float playerXSpeed = 0f;
             float playerYSpeed = 0f;
             float playerSpeedIncr = 0.0001f;
             float playerSpeedDecr = 0.0001f;
             int playerLock = 0;
+            mapSelect map = mapSelect.map0;
             while (!Raylib.WindowShouldClose())
             {
-                mapSelect map = mapSelect.map1;
-                if (mapTarget != 1)
+                if (mapTarget == 0)
                 {
-                    mapDisplay++;
                     switch (mapDisplay)
                     {
                         case 1:
                             map = mapSelect.map1;
+
                             break;
                         case 2:
-                            //map = mapSelect.map2;
+                            map = mapSelect.map2;
                             break;
-
-
+                        default:
+                            Raylib.DrawText("Text Not found.", 200, 100, 50, Color.RED);
+                            break;
                     }
+                    mapDisplay++;
+                    mapTarget = 1;
                 }
                 Raylib.BeginDrawing();
 
@@ -78,27 +106,34 @@ namespace Kuddkrig
                 int offsetY = 50;
 
 
-                for (int y = 0; y < mapp.GetLength(0); y++)
+                for (int y = 0; y < mapP1.GetLength(0); y++)
                 {
-                    for (int x = 0; x < mapp.GetLength(1); x++)
+                    for (int x = 0; x < mapP1.GetLength(1); x++)
                     {
-                        if (mapp[y, x] == 'B')
+                        if (map == mapSelect.map1)
                         {
-                            Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
-                        }
-                        else if (mapp[y, x] == 'P')
-                        {
-                            if (playerLock == 0)
+                            if (mapP1[y, x] == 'B')
                             {
-                                playerY = offsetY + y * mapScale;
-                                playerX = offsetX + x * mapScale;
+                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
                             }
-                            playerLock = 1;
-                            Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
+                            else if (mapP1[y, x] == 'P')
+                            {
+                                if (playerLock == 0)
+                                {
+                                    playerY = offsetY + y * mapScale;
+                                    playerX = offsetX + x * mapScale;
+                                }
+                                playerLock = 1;
+                                Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
+                            }
+                            else
+                            {
+
+                            }
                         }
                         else
                         {
-
+                            Raylib.DrawText("Map Not found.", 200, 200, 50, Color.RED);
                         }
                     }
                 }
