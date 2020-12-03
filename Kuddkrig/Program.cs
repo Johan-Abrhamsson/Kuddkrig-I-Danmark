@@ -74,7 +74,7 @@ namespace Kuddkrig
             float playerYSpeed = 0f;
             float playerSpeedIncr = 0.0001f;
             float playerSpeedDecr = 0.0001f;
-            int playerLock = 0;
+            bool playerLock = false;
             mapSelect map = mapSelect.map0;
             while (!Raylib.WindowShouldClose())
             {
@@ -118,12 +118,33 @@ namespace Kuddkrig
                             }
                             else if (mapP1[y, x] == 'P')
                             {
-                                if (playerLock == 0)
+                                if (playerLock == false)
                                 {
                                     playerY = offsetY + y * mapScale;
                                     playerX = offsetX + x * mapScale;
                                 }
-                                playerLock = 1;
+                                playerLock = true;
+                                Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else if (map == mapSelect.map2)
+                        {
+                            if (mapP2[y, x] == 'B')
+                            {
+                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                            }
+                            else if (mapP1[y, x] == 'P')
+                            {
+                                if (playerLock == false)
+                                {
+                                    playerY = offsetY + y * mapScale;
+                                    playerX = offsetX + x * mapScale;
+                                }
+                                playerLock = true;
                                 Raylib.DrawRectangle((int)playerX + 2, (int)playerY + 2, 6, 6, Color.RED);
                             }
                             else
@@ -197,6 +218,13 @@ namespace Kuddkrig
                         playerY = playerY + playerYSpeed;
                         playerYSpeed = playerYSpeed + playerSpeedDecr;
                     }
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
+                {
+                    mapTarget = 0;
+                    playerLock = false;
+                    playerXSpeed = 0;
+                    playerYSpeed = 0;
                 }
                 Raylib.DrawText(playerSpeedIncr.ToString(), 600, 400, 30, Color.RED);
                 Raylib.DrawText(playerSpeedDecr.ToString(), 600, 500, 30, Color.RED);
