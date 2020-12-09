@@ -5,6 +5,12 @@ namespace Kuddkrig
 {
     class Program
     {
+        public class player
+        {
+            float playerY = 0;
+            float playerX = 0;
+            float playerA = 0;
+        }
         public class block
         {
             int blockid = 0;
@@ -48,6 +54,7 @@ namespace Kuddkrig
                 {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 };
+            char[] mapP1D1 = { 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'E', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B' };
             char[,] mapP2 = {
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 {'B','P',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
@@ -72,6 +79,13 @@ namespace Kuddkrig
                 };
             float playerY = 0;
             float playerX = 0;
+            float playerA = 0;
+            int mapScale = 10;
+            int screenWidth = 800;
+            int screenHeight = 600;
+            float fov = 3.14159f / 4.0f;
+            float depth = 16.0f;
+
             float[,] playerPos = {
             { playerY},
             { playerX},
@@ -109,7 +123,6 @@ namespace Kuddkrig
 
 
                 Raylib.ClearBackground(Color.WHITE);
-                int mapScale = 10;
 
                 int offsetX = 50;
                 int offsetY = 50;
@@ -119,6 +132,35 @@ namespace Kuddkrig
                 {
                     for (int x = 0; x < mapP1.GetLength(1); x++)
                     {
+                        float rayAngle = (playerA - fov / 2.0f) + ((float)x / (float)mapScale) * fov;
+
+                        float distanceToWall = 0f;
+                        bool hitWall = false;
+
+                        float eyeX = (float)Math.Sin(rayAngle);
+                        float eyeY = (float)Math.Cos(rayAngle);
+                        while (!hitWall && distanceToWall < depth)
+                        {
+                            distanceToWall += 0.1f;
+                            int testX = (int)(playerX + eyeX * distanceToWall);
+                            int testY = (int)(playerY + eyeY * distanceToWall);
+                            if (testX < 0 || testX >= mapScale || testY < 0 || testY >= mapScale)
+                            {
+                                hitWall = true;
+                                distanceToWall = depth;
+                            }
+                            else
+                            {
+                                if (mapP1D1[testY * mapScale + testX] == 'B')
+                                {
+                                    hitWall = true;
+                                }
+                            }
+                        }
+
+                        float ceiling = (float)(screenHeight / 2.0f) - screenHeight / ((float)distanceToWall);
+                        float floor = screenHeight - ceiling;
+
                         if (map == mapSelect.map1)
                         {
                             //Blocks
@@ -280,42 +322,6 @@ namespace Kuddkrig
 
 
                 Raylib.EndDrawing();
-            }
-        }
-        static void Drawmap(int y, int x, char[,] map)
-        {
-            int mapScale = 10;
-            int offsetX = 50;
-            int offsetY = 50;
-            float playerX = 0;
-            float playerY = 0;
-            bool playerLock = false;
-            //Blocks
-            if (map[y, x] == 'B')
-            {
-                block B1 = new block();
-
-                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
-            }
-            //Player
-            else if (map[y, x] == 'P')
-            {
-                if (playerLock == false)
-                {
-                    playerY = offsetY + y * mapScale;
-                    playerX = offsetX + x * mapScale;
-                }
-                playerLock = true;
-                Raylib.DrawCircle((int)playerX + 2, (int)playerY + 2, 3, Color.RED);
-            }
-            //Enemy
-            else if (map[y, x] == 'E')
-            {
-                Raylib.DrawCircle(offsetX + x * mapScale, offsetY + y * mapScale, 3, Color.YELLOW);
-            }
-            else
-            {
-
             }
         }
     }
