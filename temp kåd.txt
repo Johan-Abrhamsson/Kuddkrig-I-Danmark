@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Raylib_cs;
 
 namespace Kuddkrig
@@ -187,17 +187,16 @@ namespace Kuddkrig
                                             float rayLength = Math.Abs(y2Look);
                                             //fill bestämmer färgen som kommer att användas när vi ritar något på skärmen
                                             //för att göra det lite enklare att förstå hur långt borta föremål är så kan vi göra så att föremål som är längre bort också är mörkare
-                                            if (rayLength > 0)
+                                            if (rayLength >= 0)
                                             {
                                                 float fill = 255.0f / rayLength;
-                                                Color fillcolor = new Color((int)fill, (int)fill, (int)fill, 255);
-                                                //tjockleken på varje kollumn kommer vara en konstant. För att få kollumnerna att täcka hela skärmen gör vi tjockleken
-                                                //till antal strålar (vilket också är antal kollumner) delat på tjockleken av fönstret
-                                                Raylib.DrawRectangle(((int)(collumnNumber * (screenWidth / numberOfRays))), (int)((screenHeight / 2) - (screenHeight / rayLength) * 0.5), (int)(screenWidth / numberOfRays), (int)(screenHeight / rayLength), fillcolor);
-                                                //rect tar start position för x, start position för y, bredd, höjd
-                                                //du får implementera din egen funktion för att rita rektanglar
-                                                //det är viktigt att de ritas utåt från mitten
                                             }
+                                            //tjockleken på varje kollumn kommer vara en konstant. För att få kollumnerna att täcka hela skärmen gör vi tjockleken
+                                            //till antal strålar (vilket också är antal kollumner) delat på tjockleken av fönstret
+                                            Raylib.DrawRectangle(((int)(collumnNumber * (screenWidth / numberOfRays))), (int)((screenHeight / 2) - (screenHeight / rayLength) * 0.5), (int)(screenWidth / numberOfRays), (int)(screenHeight / rayLength), Color.YELLOW);
+                                            //rect tar start position för x, start position för y, bredd, höjd
+                                            //du får implementera din egen funktion för att rita rektanglar
+                                            //det är viktigt att de ritas utåt från mitten
                                         }
                                     }
                                 }
@@ -259,5 +258,3 @@ namespace Kuddkrig
         }
     }
 }
-
-
