@@ -1,0 +1,145 @@
+ if (map == mapSelect.map1)
+                        {
+                            //Blocks
+                            if (mapP1[y, x] == 'B')
+                            {
+                                block B1 = new block();
+
+                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                            }
+                            //Player
+                            else if (mapP1[y, x] == 'P')
+                            {
+                                if (playerLock == false)
+                                {
+                                    playerY = offsetY + y * mapScale;
+                                    playerX = offsetX + x * mapScale;
+                                }
+                                playerLock = true;
+                                Raylib.DrawCircle((int)playerX + 2, (int)playerY + 2, 3, Color.RED);
+                            }
+                            //Enemy
+                            else if (mapP1[y, x] == 'E')
+                            {
+                                Raylib.DrawCircle(offsetX + x * mapScale, offsetY + y * mapScale, 3, Color.YELLOW);
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else if (map == mapSelect.map2)
+                        {
+                            if (mapP2[y, x] == 'B')
+                            {
+                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                            }
+                            else if (mapP2[y, x] == 'P')
+                            {
+                                if (playerLock == false)
+                                {
+                                    playerY = offsetY + y * mapScale;
+                                    playerX = offsetX + x * mapScale;
+                                }
+                                playerLock = true;
+                                Raylib.DrawCircle((int)playerX + 3, (int)playerY + 3, 3, Color.RED);
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else
+                        {
+                            Raylib.DrawText("Map Not found.", 200, 200, 50, Color.RED);
+                        }
+                    }
+                }
+
+
+if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
+            {
+                playerStill = 0;
+                playerX = playerX + playerXSpeed;
+                if (playerXSpeed > -0.05)
+                {
+                    playerXSpeed = playerXSpeed - playerSpeedIncr;
+                }
+
+            }
+            else if (Raylib.IsKeyDown(KeyboardKey.KEY_D))
+            {
+                playerStill = 0;
+                playerX = playerX + playerXSpeed;
+                if (playerXSpeed < 0.05)
+                {
+                    playerXSpeed = playerXSpeed + playerSpeedIncr;
+                }
+
+            }
+            else
+            {
+                if (playerXSpeed > 0)
+                {
+                    playerStill++;
+                    playerX = playerX + playerXSpeed;
+                    playerXSpeed = playerXSpeed - playerSpeedDecr;
+                    if (playerStill > 1000)
+                    {
+                        playerXSpeed = 0;
+                    }
+                }
+                if (playerXSpeed < 0)
+                {
+                    playerStill++;
+                    playerX = playerX + playerXSpeed;
+                    playerXSpeed = playerXSpeed + playerSpeedDecr;
+                    if (playerStill > 1000)
+                    {
+                        playerXSpeed = 0;
+                    }
+                }
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
+            {
+                playerStill = 0;
+                playerY = playerY + playerYSpeed;
+                if (playerYSpeed < 0.05)
+                {
+                    playerYSpeed = playerYSpeed + playerSpeedIncr;
+                }
+
+            }
+else if (Raylib.IsKeyDown(KeyboardKey.KEY_W))
+            {
+playerStill = 0;
+                playerY = playerY + playerYSpeed;
+                if (playerYSpeed > -0.05)
+                {
+                    playerYSpeed = playerYSpeed - playerSpeedIncr;
+                }
+            }
+else
+            {
+                if (playerYSpeed > 0)
+                {
+                    playerStill++;
+                    playerY = playerY + playerYSpeed;
+                    playerYSpeed = playerYSpeed - playerSpeedDecr;
+                    if (playerStill > 1000)
+                    {
+                        playerYSpeed = 0;
+                    }
+
+                }
+                if (playerYSpeed < 0)
+                {
+                    playerStill++;
+                    playerY = playerY + playerYSpeed;
+                    playerYSpeed = playerYSpeed + playerSpeedDecr;
+                    if (playerStill > 1000)
+                    {
+                        playerYSpeed = 0;
+                    }
+                }
+            }

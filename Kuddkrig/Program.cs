@@ -9,13 +9,16 @@ namespace Kuddkrig
         {
             float playerY = 0;
             float playerX = 0;
-            float playerA = 0;
         }
         public class block
         {
             int blockid = 0;
             int blockX = 0;
             int blockY = 0;
+        }
+        public class enemy{
+            float eY = 0;
+            float eX = 0;
         }
 
         public enum mapSelect
@@ -81,13 +84,13 @@ namespace Kuddkrig
             //Ska jag värkligen göra en raycasting och inte bara top down?
             float playerY = 5;
             float playerX = 5;
-            float playerA = 0;
-            float playerASpeed = 0.05f;
             int mapScale = 10;
             float screenWidth = 800;
             float screenHeight = 600;
-            float fov = 3.14159f / 4.0f;
-            float depth = 16.0f;
+            //ska användas för distans.
+            // float edX = eX - playerX;
+            // float edY = eY - playerY;
+            // float ed = rt(edX * edX + edY * edY);
 
             float[,] playerPos = {
             { playerY},
@@ -125,7 +128,7 @@ namespace Kuddkrig
                 Raylib.BeginDrawing();
 
 
-                Raylib.ClearBackground(Color.BLACK);
+                Raylib.ClearBackground(Color.WHITE);
 
                 int offsetX = 50;
                 int offsetY = 50;
@@ -135,129 +138,171 @@ namespace Kuddkrig
                 {
                     for (int x = 0; x < mapP1.GetLength(1); x++)
                     {
-                        int yLook = -15;
-                        int offset = 15;
-                        int collumnNumber = 0;
-                        //antalet strålar som vi skickar ut är ett konstant värde
-                        //i forloopen går vi mellan -15 och 15 med ett steg av 0.1 vilket betyder att vi kommer att skicka ut 30 / 0.1 strålar
-                        int numberOfRays = 300;
-
-                        for (float xLook = -offset; xLook <= offset; xLook += 0.1f)
+                        if (map == mapSelect.map1)
                         {
-                            //för att veta vart du ska placera varje kollumn håller du koll på varje stråles ordning
-                            //sen ritar du kollumnerna i den ordning de kom
-                            collumnNumber += 1;
-                            //vi räknar ut lutningen av linjen (strålen) som formas av de två punkterna (0, 0) och (x, y)
-                            //vi vill dock ha lutningen relativ till y, så istället för y = kx + m vill vi ha x = ky + m
-                            //(m för varje linje (stråle) kommer vara noll btw så vi ingnorerar m)
-                            //anledningen till det här är för att linjen som bildas när punkterna (playerX, playerY) och (x, y) har samma x-koordinat inte kommer
-                            //att ha 'oändlig' lutning relativ till x eftersom den går rakt upp. Det här ger oss ett problem, vilket är varför vi vill ha lutningen
-                            //relativ till y
-
-                            float gradient = xLook / yLook; //detta är samma sak som (x - 0) / (y - 0) vanligtvis skulle vi använda (y2 - y1) / (x2 - x1) men vi vill ha lutningen
-                                                            //relativ till y så vi gör (x2 - x1) / (y2 - y1)
-
-                            bool collision = false;
-                            //om strålen kolliderar med något sätter vi denna till true
-                            float y2Look = 0;
-
-                            while (collision == false && y2Look >= yLook)
+                            //Blocks
+                            if (mapP1[y, x] == 'B')
                             {
-                                y2Look -= 0.01f;
+                                block B1 = new block();
 
-                                float x2Look = y2Look * gradient;
-                                //x = ky + m, där m = 0
-
-                                //nu när vi har både x2 och y2 vill vi rotera dem med playerAngle runt origo
-                                float rotatedX = 0;
-                                float rotatedY = 0;
-
-                                rotatedX = (float)Math.Cos(playerA) * y2Look - (float)Math.Sin(playerA) * x2Look;
-                                rotatedY = (float)Math.Sin(playerA) * y2Look + (float)Math.Cos(playerA) * x2Look;
-
-                                try
+                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                            }
+                            //Player
+                            else if (mapP1[y, x] == 'P')
+                            {
+                                if (playerLock == false)
                                 {
-                                    //jag har detta i ett try block eftersom det kan hända att vi försöker kolla i ett index som inte finns med i 2D arrayen för mappen
-                                    //vilket skulle ge oss ArrayIndexOutOfBoundsException
-                                    if (map == mapSelect.map1)
-                                    {
-                                        if (mapP1[(int)(rotatedY + playerY), (int)(rotatedX + playerX)] == 'B')
-                                        {
-                                            collision = true;
-                                            float rayLength = Math.Abs(y2Look);
-                                            //fill bestämmer färgen som kommer att användas när vi ritar något på skärmen
-                                            //för att göra det lite enklare att förstå hur långt borta föremål är så kan vi göra så att föremål som är längre bort också är mörkare
-                                            if (rayLength > 0)
-                                            {
-                                                float fill = 255.0f / rayLength;
-                                                Color fillcolor = new Color((int)fill, (int)fill, (int)fill, 255);
-                                                //tjockleken på varje kollumn kommer vara en konstant. För att få kollumnerna att täcka hela skärmen gör vi tjockleken
-                                                //till antal strålar (vilket också är antal kollumner) delat på tjockleken av fönstret
-                                                Raylib.DrawRectangle(((int)(collumnNumber * (screenWidth / numberOfRays))), (int)((screenHeight / 2) - (screenHeight / rayLength) * 0.5), (int)(screenWidth / numberOfRays), (int)(screenHeight / rayLength), fillcolor);
-                                                //rect tar start position för x, start position för y, bredd, höjd
-                                                //du får implementera din egen funktion för att rita rektanglar
-                                                //det är viktigt att de ritas utåt från mitten
-                                            }
-                                        }
-                                    }
+                                    playerY = offsetY + y * mapScale;
+                                    playerX = offsetX + x * mapScale;
                                 }
-                                catch
-                                {
-                                    //att fortsätta kolla efter kollisioner för detta tillfälle är onödigt så vi bryter ut ur while-loopen
-                                    break;
-                                }
+                                playerLock = true;
+                                Raylib.DrawCircle((int)playerX + 2, (int)playerY + 2, 3, Color.RED);
+                            }
+                            //Enemy
+                            else if (mapP1[y, x] == 'E')
+                            {
+                                Raylib.DrawCircle(offsetX + x * mapScale, offsetY + y * mapScale, 3, Color.YELLOW);
+                            }
+                            else
+                            {
+
                             }
                         }
-                    }
-                    if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
-                    {
-                        playerX += (float)Math.Cos(playerA) * playerASpeed;
-                        playerY -= (float)Math.Sin(playerA) * playerASpeed;
+                        else if (map == mapSelect.map2)
+                        {
+                            //Blocks
+                            if (mapP2[y, x] == 'B')
+                            {
+                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                            }
+                            //Player
+                            else if (mapP2[y, x] == 'P')
+                            {
+                                if (playerLock == false)
+                                {
+                                    playerY = offsetY + y * mapScale;
+                                    playerX = offsetX + x * mapScale;
+                                }
+                                playerLock = true;
+                                Raylib.DrawCircle((int)playerX + 3, (int)playerY + 3, 3, Color.RED);
+                            }
+                            //Enemy
+                            else if (mapP1[y, x] == 'E')
+                            {
+                                Raylib.DrawCircle(offsetX + x * mapScale, offsetY + y * mapScale, 3, Color.YELLOW);
+                            }
+                            else
+                            {
 
+                            }
+                        }
+                        else
+                        {
+                            Raylib.DrawText("Map Not found.", 200, 200, 50, Color.RED);
+                        }
                     }
-                    else if (Raylib.IsKeyDown(KeyboardKey.KEY_D))
-                    {
-                        playerX -= (float)Math.Cos(playerA) * playerASpeed;
-                        playerY += (float)Math.Sin(playerA) * playerASpeed;
-
-                    }
-                    if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
-                    {
-                        playerX += (float)Math.Cos(playerA) * playerASpeed;
-                        playerY += (float)Math.Sin(playerA) * playerASpeed;
-
-                    }
-                    else if (Raylib.IsKeyDown(KeyboardKey.KEY_W))
-                    {
-                        playerX -= (float)Math.Cos(playerA) * playerASpeed;
-                        playerY -= (float)Math.Sin(playerA) * playerASpeed;
-                    }
-                    if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
-                    {
-                        playerA = playerA - playerASpeed;
-
-                    }
-                    if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
-                    {
-                        playerA = playerA + playerASpeed;
-
-                    }
-                    if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
-                    {
-                        mapTarget = 0;
-                        playerLock = false;
-                        playerXSpeed = 0;
-                        playerYSpeed = 0;
-                        playerX = 0;
-                        playerY = 0;
-                    }
-
-
-                    Raylib.EndDrawing();
                 }
+
+
+                if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
+                {
+                    playerStill = 0;
+                    playerX = playerX + playerXSpeed;
+                    if (playerXSpeed > -0.05)
+                    {
+                        playerXSpeed = playerXSpeed - playerSpeedIncr;
+                    }
+
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.KEY_D))
+                {
+                    playerStill = 0;
+                    playerX = playerX + playerXSpeed;
+                    if (playerXSpeed < 0.05)
+                    {
+                        playerXSpeed = playerXSpeed + playerSpeedIncr;
+                    }
+
+                }
+                else
+                {
+                    if (playerXSpeed > 0)
+                    {
+                        playerStill++;
+                        playerX = playerX + playerXSpeed;
+                        playerXSpeed = playerXSpeed - playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerXSpeed = 0;
+                        }
+                    }
+                    if (playerXSpeed < 0)
+                    {
+                        playerStill++;
+                        playerX = playerX + playerXSpeed;
+                        playerXSpeed = playerXSpeed + playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerXSpeed = 0;
+                        }
+                    }
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.KEY_S))
+                {
+                    playerStill = 0;
+                    playerY = playerY + playerYSpeed;
+                    if (playerYSpeed < 0.05)
+                    {
+                        playerYSpeed = playerYSpeed + playerSpeedIncr;
+                    }
+
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.KEY_W))
+                {
+                    playerStill = 0;
+                    playerY = playerY + playerYSpeed;
+                    if (playerYSpeed > -0.05)
+                    {
+                        playerYSpeed = playerYSpeed - playerSpeedIncr;
+                    }
+                }
+                else
+                {
+                    if (playerYSpeed > 0)
+                    {
+                        playerStill++;
+                        playerY = playerY + playerYSpeed;
+                        playerYSpeed = playerYSpeed - playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerYSpeed = 0;
+                        }
+
+                    }
+                    if (playerYSpeed < 0)
+                    {
+                        playerStill++;
+                        playerY = playerY + playerYSpeed;
+                        playerYSpeed = playerYSpeed + playerSpeedDecr;
+                        if (playerStill > 1000)
+                        {
+                            playerYSpeed = 0;
+                        }
+                    }
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
+                {
+                    mapTarget = 0;
+                    playerLock = false;
+                    playerXSpeed = 0;
+                    playerYSpeed = 0;
+                    playerX = 0;
+                    playerY = 0;
+                }
+
+
+                Raylib.EndDrawing();
             }
         }
     }
 }
-
-
