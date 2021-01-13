@@ -16,7 +16,8 @@ namespace Kuddkrig
             int blockX = 0;
             int blockY = 0;
         }
-        public class enemy{
+        public class enemy
+        {
             float eY = 0;
             float eX = 0;
         }
@@ -57,7 +58,6 @@ namespace Kuddkrig
                 {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 };
-            char[] mapP1D1 = { 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'E', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', ' ', ' ', 'B', 'B', ' ', ' ', ' ', ' ', 'B', 'B', 'B', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B' };
             char[,] mapP2 = {
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 {'B','P',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ','B'},
@@ -187,9 +187,9 @@ namespace Kuddkrig
                                 Raylib.DrawCircle((int)playerX + 3, (int)playerY + 3, 3, Color.RED);
                             }
                             //Enemy
-                            else if (mapP1[y, x] == 'E')
+                            else if (mapP2[y, x] == 'E')
                             {
-                                Raylib.DrawCircle(offsetX + x * mapScale, offsetY + y * mapScale, 3, Color.YELLOW);
+                                Raylib.DrawCircle(offsetX + x * mapScale + 3, offsetY + y * mapScale + 3, 3, Color.YELLOW);
                             }
                             else
                             {
@@ -290,6 +290,25 @@ namespace Kuddkrig
                         }
                     }
                 }
+                //Sjukta
+                if (Raylib.IsKeyDown(KeyboardKey.KEY_UP))
+                {
+                    shoot(0, -2, playerX + 3, playerY + 3, "up");
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
+                {
+                    shoot(0, 2, playerX + 3, playerY + 3, "down");
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
+                {
+                    shoot(2, 0, playerX + 3, playerY + 3, "right");
+                }
+                else if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
+                {
+                    shoot(-2, 0, playerX + 3, playerY + 3, "left");
+                }
+
+                //Reload
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
                 {
                     mapTarget = 0;
@@ -303,6 +322,33 @@ namespace Kuddkrig
 
                 Raylib.EndDrawing();
             }
+        }
+        static void shoot(float Speedx, float Speedy, float Xknow, float Yknow, string direction)
+        {
+            if (direction == "up")
+            {
+                Xknow = Xknow + Speedx;
+                Yknow = Yknow - 6 + Speedy;
+            }
+            else if (direction == "down")
+            {
+                Xknow = Xknow + Speedx;
+                Yknow = Yknow + 6 + Speedy;
+            }
+            else if (direction == "right")
+            {
+                Xknow = Xknow + 6 + Speedx;
+                Yknow = Yknow + Speedy;
+            }
+            else if (direction == "left")
+            {
+                Xknow = Xknow - 6 + Speedx;
+                Yknow = Yknow + Speedy;
+            }
+            Raylib.DrawCircle((int)Xknow, (int)Yknow, 1, Color.ORANGE);
+            Xknow = Xknow + Speedx;
+            Yknow = Yknow + Speedy;
+
         }
     }
 }
