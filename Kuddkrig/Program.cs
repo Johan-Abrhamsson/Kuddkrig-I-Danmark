@@ -5,21 +5,8 @@ namespace Kuddkrig
 {
     class Program
     {
-        public class player
-        {
-            float playerY = 0;
-            float playerX = 0;
-        }
         public class block
         {
-            int blockid = 0;
-            int blockX = 0;
-            int blockY = 0;
-        }
-        public class enemy
-        {
-            float eY = 0;
-            float eX = 0;
         }
 
         public enum mapSelect
@@ -80,28 +67,24 @@ namespace Kuddkrig
                 {'B',' ',' ',' ',' ','B','B','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B'},
                 {'B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B','B'},
                 };
-
-            //Ska jag värkligen göra en raycasting och inte bara top down?
             float playerY = 5;
             float playerX = 5;
-            int mapScale = 10;
-            float screenWidth = 800;
-            float screenHeight = 600;
-            //ska användas för distans.
-            // float edX = eX - playerX;
-            // float edY = eY - playerY;
-            // float ed = rt(edX * edX + edY * edY);
-
             float[,] playerPos = {
-            { playerY},
-            { playerX},
+                { playerX},
+                { playerY},
             };
+            int mapScale = 10;
             float playerXSpeed = 0f;
             float playerYSpeed = 0f;
             float playerSpeedIncr = 0.0001f;
             float playerSpeedDecr = 0.0001f;
             bool playerLock = false;
             int playerStill = 0;
+            float SpeedX = 0;
+            float SpeedY = 0;
+            float Xknow = 1;
+            float Yknow = 1;
+            bool collision = false;
             mapSelect map = mapSelect.map0;
             while (!Raylib.WindowShouldClose())
             {
@@ -143,8 +126,6 @@ namespace Kuddkrig
                             //Blocks
                             if (mapP1[y, x] == 'B')
                             {
-                                block B1 = new block();
-
                                 Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
                             }
                             //Player
@@ -290,23 +271,43 @@ namespace Kuddkrig
                         }
                     }
                 }
-                //Sjukta
+                //Sjukta     
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_UP))
                 {
-                    shoot(0, -2, playerX + 3, playerY + 3, "up");
+                    SpeedY = -0.5f;
+                    Yknow = playerY - 3 + SpeedY;
+                    Xknow = playerX + 2;
+                    SpeedX = 0;
                 }
+
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
                 {
-                    shoot(0, 2, playerX + 3, playerY + 3, "down");
+                    SpeedY = 0.5f;
+                    Yknow = playerY + 7 + SpeedY;
+                    Xknow = playerX + 2;
+                    SpeedX = 0;
                 }
+
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_RIGHT))
                 {
-                    shoot(2, 0, playerX + 3, playerY + 3, "right");
+                    SpeedX = 0.5f;
+                    Xknow = playerX + 7 + SpeedX;
+                    Yknow = playerY + 2;
+                    SpeedY = 0;
                 }
+
                 else if (Raylib.IsKeyDown(KeyboardKey.KEY_LEFT))
                 {
-                    shoot(-2, 0, playerX + 3, playerY + 3, "left");
+                    SpeedX = -0.5f;
+                    Xknow = playerX - 3 + SpeedX;
+                    Yknow = playerY + 2;
+                    SpeedY = 0;
                 }
+                Xknow = Xknow + SpeedX;
+                Yknow = Yknow + SpeedY;
+                Raylib.DrawCircle((int)Xknow, (int)Yknow, 2, Color.ORANGE);
+                
+
 
                 //Reload
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
@@ -322,33 +323,6 @@ namespace Kuddkrig
 
                 Raylib.EndDrawing();
             }
-        }
-        static void shoot(float Speedx, float Speedy, float Xknow, float Yknow, string direction)
-        {
-            if (direction == "up")
-            {
-                Xknow = Xknow + Speedx;
-                Yknow = Yknow - 6 + Speedy;
-            }
-            else if (direction == "down")
-            {
-                Xknow = Xknow + Speedx;
-                Yknow = Yknow + 6 + Speedy;
-            }
-            else if (direction == "right")
-            {
-                Xknow = Xknow + 6 + Speedx;
-                Yknow = Yknow + Speedy;
-            }
-            else if (direction == "left")
-            {
-                Xknow = Xknow - 6 + Speedx;
-                Yknow = Yknow + Speedy;
-            }
-            Raylib.DrawCircle((int)Xknow, (int)Yknow, 1, Color.ORANGE);
-            Xknow = Xknow + Speedx;
-            Yknow = Yknow + Speedy;
-
         }
     }
 }
