@@ -1,12 +1,45 @@
 ﻿using System;
 using Raylib_cs;
+using System.Numerics;
+using System.Collections.Generic;
 
 namespace Kuddkrig
 {
     class Program
     {
-        public class block
+        public class Block
         {
+            public Vector2 position = new Vector2(0, 0);
+            public Vector2 size = new Vector2(0, 0);
+            public Rectangle bounds = new Rectangle();
+
+            public Block(Vector2 _position, Vector2 _size)
+            {
+                position = _position;
+                size = _size;
+            }
+            public void Draw()
+            {
+                Raylib.DrawRectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, Color.YELLOW);
+            }
+
+        }
+
+        public class Enemy
+        {
+            public Vector2 position = new Vector2(0, 0);
+            public Vector2 size = new Vector2(0, 0);
+            public Rectangle bounds = new Rectangle();
+
+            public Enemy(Vector2 _position, Vector2 _size)
+            {
+                position = _position;
+                size = _size;
+            }
+            public void Draw()
+            {
+                Raylib.DrawRectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, Color.YELLOW);
+            }
         }
 
         public enum mapSelect
@@ -19,6 +52,8 @@ namespace Kuddkrig
 
         static void Main(string[] args)
         {
+            List<Enemy> enemies = new List<Enemy>();
+            List<Block> mapList = new List<Block>();
             Raylib.InitWindow(800, 600, "");
 
             int mapTarget = 0;
@@ -84,6 +119,8 @@ namespace Kuddkrig
             float SpeedY = 0;
             float Xknow = 1;
             float Yknow = 1;
+            int offsetX = 50;
+            int offsetY = 50;
             bool collision = false;
             mapSelect map = mapSelect.map0;
             while (!Raylib.WindowShouldClose())
@@ -95,6 +132,23 @@ namespace Kuddkrig
                     {
                         case 1:
                             map = mapSelect.map1;
+                            for (int y = 0; y < mapP1.GetLength(0); y++)
+                            {
+                                for (int x = 0; x < mapP1.GetLength(1); x++)
+                                {
+                                    if (mapP1[y, x] == 'B')
+                                    {
+                                        mapList.Add(new Block(new Vector2(20 * x, 20 * y), new Vector2(20 * x, 20 * y)));
+                                    }
+                                    else if (mapP1[y, x] == 'E')
+                                    {
+                                        enemies.Add(new Enemy(new Vector2(offsetX + x * mapScale, offsetY + y * mapScale), new Vector2(3, 3)));
+                                    }
+
+
+                                }
+                            }
+                            Console.WriteLine("map1");
 
                             break;
                         case 2:
@@ -111,79 +165,85 @@ namespace Kuddkrig
                 Raylib.BeginDrawing();
 
 
-                Raylib.ClearBackground(Color.WHITE);
+                Raylib.ClearBackground(Color.GREEN);
+                #region Bad code
+                // //map writeing
+                // for (int y = 0; y < mapP1.GetLength(0); y++)
+                // {
+                //     for (int x = 0; x < mapP1.GetLength(1); x++)
+                //     {
+                //         if (map == mapSelect.map1)
+                //         {
+                //             //Blocks
+                //             if (mapP1[y, x] == 'B')
+                //             {
+                //                 Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                //             }
+                //             //Player
+                //             else if (mapP1[y, x] == 'P')
+                //             {
+                //                 if (playerLock == false)
+                //                 {
+                //                     playerY = offsetY + y * mapScale;
+                //                     playerX = offsetX + x * mapScale;
+                //                 }
+                //                 playerLock = true;
+                //                 Raylib.DrawCircle((int)playerX + 2, (int)playerY + 2, 3, Color.RED);
+                //             }
+                //             //Enemy
+                //             else if (mapP1[y, x] == 'E')
+                //             {
 
-                int offsetX = 50;
-                int offsetY = 50;
+                //                 //enemies.Add(new Enemy(new Vector2(offsetX + x * mapScale, offsetY + y * mapScale), new Vector2(3, 3)));
+                //             }
+                //             else
+                //             {
 
-                //map writeing
-                for (int y = 0; y < mapP1.GetLength(0); y++)
+                //             }
+                //         }
+                //         else if (map == mapSelect.map2)
+                //         {
+                //             //Blocks
+                //             if (mapP2[y, x] == 'B')
+                //             {
+                //                 Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
+                //             }
+                //             //Player
+                //             else if (mapP2[y, x] == 'P')
+                //             {
+                //                 if (playerLock == false)
+                //                 {
+                //                     playerY = offsetY + y * mapScale;
+                //                     playerX = offsetX + x * mapScale;
+                //                 }
+                //                 playerLock = true;
+                //                 Raylib.DrawCircle((int)playerX + 3, (int)playerY + 3, 3, Color.RED);
+                //             }
+                //             //Enemy
+                //             else if (mapP2[y, x] == 'E')
+                //             {
+                //                 Raylib.DrawCircle(offsetX + x * mapScale + 3, offsetY + y * mapScale + 3, 3, Color.YELLOW);
+                //             }
+                //             else
+                //             {
+
+                //             }
+                //         }
+                //         else
+                //         {
+                //             Raylib.DrawText("Map Not found.", 200, 200, 50, Color.RED);
+                //         }
+                //     }
+                // }
+                #endregion
+                for (int i = 0; i < enemies.Count; i++)
                 {
-                    for (int x = 0; x < mapP1.GetLength(1); x++)
-                    {
-                        if (map == mapSelect.map1)
-                        {
-                            //Blocks
-                            if (mapP1[y, x] == 'B')
-                            {
-                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
-                            }
-                            //Player
-                            else if (mapP1[y, x] == 'P')
-                            {
-                                if (playerLock == false)
-                                {
-                                    playerY = offsetY + y * mapScale;
-                                    playerX = offsetX + x * mapScale;
-                                }
-                                playerLock = true;
-                                Raylib.DrawCircle((int)playerX + 2, (int)playerY + 2, 3, Color.RED);
-                            }
-                            //Enemy
-                            else if (mapP1[y, x] == 'E')
-                            {
-                                Raylib.DrawCircle(offsetX + x * mapScale, offsetY + y * mapScale, 3, Color.YELLOW);
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                        else if (map == mapSelect.map2)
-                        {
-                            //Blocks
-                            if (mapP2[y, x] == 'B')
-                            {
-                                Raylib.DrawRectangle(offsetX + x * mapScale, offsetY + y * mapScale, 10, 10, Color.BLACK);
-                            }
-                            //Player
-                            else if (mapP2[y, x] == 'P')
-                            {
-                                if (playerLock == false)
-                                {
-                                    playerY = offsetY + y * mapScale;
-                                    playerX = offsetX + x * mapScale;
-                                }
-                                playerLock = true;
-                                Raylib.DrawCircle((int)playerX + 3, (int)playerY + 3, 3, Color.RED);
-                            }
-                            //Enemy
-                            else if (mapP2[y, x] == 'E')
-                            {
-                                Raylib.DrawCircle(offsetX + x * mapScale + 3, offsetY + y * mapScale + 3, 3, Color.YELLOW);
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                        else
-                        {
-                            Raylib.DrawText("Map Not found.", 200, 200, 50, Color.RED);
-                        }
-                    }
+                    enemies[i].Draw();
                 }
-
+                for (int i = 0; i < mapList.Count; i++)
+                {
+                    mapList[i].Draw();
+                }
 
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_A))
                 {
@@ -306,8 +366,6 @@ namespace Kuddkrig
                 Xknow = Xknow + SpeedX;
                 Yknow = Yknow + SpeedY;
                 Raylib.DrawCircle((int)Xknow, (int)Yknow, 2, Color.ORANGE);
-                
-
 
                 //Reload
                 if (Raylib.IsKeyDown(KeyboardKey.KEY_ENTER))
